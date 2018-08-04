@@ -1,0 +1,19 @@
+{
+  "name": "web-development-project-server",
+  "version": "1.0.0",
+  "description": "Accommodare server side",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-personal:ViranchiPaliwal/Web-Development-Project-Server.git"
+  },
+  "author": "Viranchi Paliwal",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "mongoose": "^5.2.6"
+  }
+}
