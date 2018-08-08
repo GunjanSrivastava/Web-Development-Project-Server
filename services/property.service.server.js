@@ -1,6 +1,8 @@
 module.exports = function (app) {
 
     app.post('/api/owner/property', createProperty);
+    app.get('/api/owner/property', findPropertiesForOwner);
+
     //
     // app.post('/api/course/:courseId/property', createProperty);
     // app.get('/api/course/:courseId/property', findPropertysForCourse);
@@ -14,15 +16,15 @@ module.exports = function (app) {
 
     const propertyModel = require('../models/property/property.model.server');
 
-    // function findPropertysForOwner(req, res) {
-    //     const currentUser = req.session.currentUser;
-    //     const ownerId = currentUser._id;
-    //     enrollmentModel
-    //         .findPropertysForOwner(ownerId)
-    //         .then(function (enrollments) {
-    //             res.json(enrollments);
-    //         });
-    // }
+    function findPropertiesForOwner(req, res) {
+        const currentUser = req.session.currentUser;
+        const ownerId = currentUser._id;
+        propertyModel
+            .findPropertiesForOwner(ownerId)
+            .then(function (enrollments) {
+                res.json(enrollments);
+            });
+    }
     //
     // function enrollOwnerInProperty(req, res) {
     //     const propertyId = req.params.propertyId;
@@ -89,14 +91,14 @@ module.exports = function (app) {
     // )
     // }
     //
-    // function findPropertysForCourse(req, res) {
-    //     const courseId = req.params['courseId'];
-    //     propertyModel
-    //         .findPropertysForCourse(courseId)
-    //         .then(function (propertys) {
-    //             res.json(propertys);
-    //         })
-    // }
+    function findPropertysForOwner(req, res) {
+        const courseId = req.params['courseId'];
+        propertyModel
+            .findPropertysForCourse(courseId)
+            .then(function (propertys) {
+                res.json(propertys);
+            })
+    }
 
     function createProperty(req, res) {
         const currentUser = req.session.currentUser;

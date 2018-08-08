@@ -6,6 +6,12 @@ function findPropertyByCredentials(credentials) {
     return propertyModel.findOne(credentials, {propertyname: 1});
 }
 
+function findPropertiesForOwner(ownerId) {
+    return propertyModel
+        .find({owner: ownerId})
+        .exec();
+}
+
 
 function createProperty(property) {
     return propertyModel.create(property);
@@ -37,7 +43,8 @@ var api = {
     findPropertyByCredentials: findPropertyByCredentials,
     updateProperty: updateProperty,
     findByPropertyName: findByPropertyName,
-    deleteProfile: deleteProfile
+    deleteProfile: deleteProfile,
+    findPropertiesForOwner: findPropertiesForOwner
 };
 
 module.exports = api;

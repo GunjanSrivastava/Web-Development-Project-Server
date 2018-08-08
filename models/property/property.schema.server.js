@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
 var Address = require('./address.schema.server');
+
 var propertySchema = mongoose.Schema({
-   type: String,
+    name: String,
+    type: String,
     availabilityType: String,
     university: String,
     address: Address,
