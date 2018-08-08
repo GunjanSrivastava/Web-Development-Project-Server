@@ -3,14 +3,14 @@ var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session')
 var mongoose = require('mongoose')
-mongoose.connect('mondodb://localhost/project/')
+mongoose.connect('mongodb://localhost/project')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin",
-        "https://webdev-client-angular.herokuapp.com");
+        "http://localhost:4200");
     res.header("Access-Control-Allow-Headers",
         "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Methods",
@@ -26,10 +26,9 @@ app.use(session({
     secret: 'any string'
 }));
 
-// var userService = require('./services/user.service.server');
-// var sectionService = require('./services/section.service.server');
-//
-// userService(app);
-// sectionService(app);
+var userService = require('./services/user.service.server');
+var propertyService = require('./services/property.service.server');
+userService(app);
+propertyService(app);
 
-app.listen(process.env.PORT || 4000);
+app.listen(4000);
