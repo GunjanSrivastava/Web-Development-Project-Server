@@ -8,6 +8,7 @@ var userSchema = mongoose.Schema({
     contact: String,
     email: String,
     profile: String,
-    role: String
+    role: String,
+    photoId: String
 }, {collection: 'user'});
 module.exports = userSchema;

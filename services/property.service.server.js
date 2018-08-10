@@ -2,7 +2,7 @@ module.exports = function (app) {
 
     app.post('/api/owner/property', createProperty);
     app.get('/api/owner/property', findPropertiesForOwner);
-
+    app.get('/api/property/:universityId', findPropertiesForUniversity);
     //
     // app.post('/api/course/:courseId/property', createProperty);
     // app.get('/api/course/:courseId/property', findPropertysForCourse);
@@ -23,6 +23,15 @@ module.exports = function (app) {
             .findPropertiesForOwner(ownerId)
             .then(function (enrollments) {
                 res.json(enrollments);
+            });
+    }
+
+    function findPropertiesForUniversity(req, res) {
+        const universityId = req.params.universityId;
+        propertyModel
+            .findPropertiesForUniversity(universityId)
+            .then(function (properties) {
+                res.json(properties);
             });
     }
     //
@@ -91,14 +100,14 @@ module.exports = function (app) {
     // )
     // }
     //
-    function findPropertysForOwner(req, res) {
-        const courseId = req.params['courseId'];
-        propertyModel
-            .findPropertysForCourse(courseId)
-            .then(function (propertys) {
-                res.json(propertys);
-            })
-    }
+    // function findPropertysForOwner(req, res) {
+    //     const courseId = req.params['courseId'];
+    //     propertyModel
+    //         .findPropertysForCourse(courseId)
+    //         .then(function (propertys) {
+    //             res.json(propertys);
+    //         })
+    // }
 
     function createProperty(req, res) {
         const currentUser = req.session.currentUser;

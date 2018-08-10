@@ -5,14 +5,21 @@ var propertySchema = mongoose.Schema({
     name: String,
     type: String,
     availabilityType: String,
-    university: String,
+    university: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UniversityModel'
+    },
     address: Address,
     description: String,
     rooms: Number,
     size: Number,
+    photoId: [{
+        type: String
+    }],
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserModel'
-    }
+    },
+    price: Number
 }, {collection: 'property'});
 module.exports = propertySchema;

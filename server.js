@@ -29,9 +29,10 @@ app.use(session({
 var userService = require('./services/user.service.server');
 var propertyService = require('./services/property.service.server');
 var universityService = require('./services/university.service.server');
+var wishlistService = require('./services/wishlist.service.server');
 
 userService(app);
 propertyService(app);
 universityService(app);
-
+wishlistService(app);
 app.listen(4000);

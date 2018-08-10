@@ -6,7 +6,6 @@ function findUserByCredentials(credentials) {
     return userModel.findOne(credentials, {username: 1});
 }
 
-
 function createUser(user) {
     return userModel.create(user);
 }

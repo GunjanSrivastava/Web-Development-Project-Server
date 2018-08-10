@@ -12,6 +12,12 @@ function findPropertiesForOwner(ownerId) {
         .exec();
 }
 
+function findPropertiesForUniversity(universityId) {
+    return propertyModel
+        .find({university: universityId})
+        .exec();
+}
+
 
 function createProperty(property) {
     return propertyModel.create(property);
@@ -44,7 +50,9 @@ var api = {
     updateProperty: updateProperty,
     findByPropertyName: findByPropertyName,
     deleteProfile: deleteProfile,
-    findPropertiesForOwner: findPropertiesForOwner
+    findPropertiesForOwner: findPropertiesForOwner,
+    findPropertiesForUniversity: findPropertiesForUniversity
+
 };
 
 module.exports = api;
