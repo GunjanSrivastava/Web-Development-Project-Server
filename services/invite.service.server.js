@@ -1,15 +1,16 @@
 module.exports = function (app) {
     app.post('/api/invite/property/:propertyId', addToInvitation);
-    app.put('/api/invite/', updateInvitationStatus);
+    app.put('/api/invite/update', updateInvitationStatus);
     app.delete('/api/invite/property/:propertyId', removeFromInvitation);
     app.get('/api/invite/property/:propertyId', findInvitationByPropertyId);
     app.get('/api/invite/tenant/property/:propertyId', findInvitationByCredentials);
 
 
-    const invitationModel = require('../models/invitation/invitation.model.server');
+    const invitationModel = require('../models/invite/invite.model.server');
 
     function findInvitationByCredentials(req, res) {
         const currentUser = req.session.currentUser;
+        const propertyId = req.params.propertyId;
         const tenantId = currentUser._id;
         const invitation = {
             user: tenantId,
@@ -37,7 +38,7 @@ module.exports = function (app) {
         };
 
         invitationModel
-            .addToInvitation(invitaion)
+            .addToInvitation(invitation)
             .then(function (invitation) {
                 res.json(invitation);
             });

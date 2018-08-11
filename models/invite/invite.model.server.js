@@ -28,6 +28,8 @@ function deleteFromInvitationByUserId(userId) {
 
 function findInvitationByPropertyId(propId){
     return inviteModel.find({property: propId})
+        .populate('user')
+        .exec();
 }
 
 function findInvitationByCredentials(credentials) {

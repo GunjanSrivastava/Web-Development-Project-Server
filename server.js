@@ -30,9 +30,11 @@ var userService = require('./services/user.service.server');
 var propertyService = require('./services/property.service.server');
 var universityService = require('./services/university.service.server');
 var wishlistService = require('./services/wishlist.service.server');
+var inviteService = require('./services/invite.service.server');
 
 userService(app);
 propertyService(app);
 universityService(app);
 wishlistService(app);
+inviteService(app);
 app.listen(4000);
