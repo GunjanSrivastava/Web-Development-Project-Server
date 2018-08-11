@@ -9,7 +9,10 @@ var propertySchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UniversityModel'
     },
-    address: Address,
+    address: {
+    type: mongoose.Schema.Types.ObjectId,
+        ref: 'AddressModel'
+    },
     description: String,
     rooms: Number,
     size: Number,

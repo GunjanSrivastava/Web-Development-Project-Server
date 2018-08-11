@@ -3,7 +3,7 @@ var userSchema = require('./user.schema.server');
 var userModel = mongoose.model('UserModel', userSchema);
 
 function findUserByCredentials(credentials) {
-    return userModel.findOne(credentials, {username: 1});
+    return userModel.findOne(credentials);
 }
 
 function createUser(user) {
@@ -27,6 +27,7 @@ function findByUserName(username) {
 }
 
 function deleteProfile(userId) {
+
     return userModel.remove({_id: userId})
 }
 

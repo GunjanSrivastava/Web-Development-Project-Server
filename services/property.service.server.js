@@ -2,7 +2,10 @@ module.exports = function (app) {
 
     app.post('/api/owner/property', createProperty);
     app.get('/api/owner/property', findPropertiesForOwner);
-    app.get('/api/property/:universityId', findPropertiesForUniversity);
+    app.get('/api/property/university/:universityId', findPropertiesForUniversity);
+    app.get('/api/property/:propertyId', findPropertyById);
+    app.delete("/api/property/:propertyId", deleteProperty);
+
     //
     // app.post('/api/course/:courseId/property', createProperty);
     // app.get('/api/course/:courseId/property', findPropertysForCourse);
@@ -15,6 +18,8 @@ module.exports = function (app) {
 
 
     const propertyModel = require('../models/property/property.model.server');
+    const addressModel = require('../models/address/address.model.server');
+    var wishlistModel = require('../models/wishlist/wishlist.model.server');
 
     function findPropertiesForOwner(req, res) {
         const currentUser = req.session.currentUser;
@@ -26,6 +31,14 @@ module.exports = function (app) {
             });
     }
 
+    function findPropertyById(req, res) {
+        var propId = req.params.propertyId;
+        return propertyModel.findPropertyById(propId)
+            .then(function (property) {
+                return res.send(property);
+            });
+    }
+
     function findPropertiesForUniversity(req, res) {
         const universityId = req.params.universityId;
         propertyModel
@@ -34,6 +47,18 @@ module.exports = function (app) {
                 res.json(properties);
             });
     }
+
+    function deleteProperty(req, res) {
+        var propId = req.params.propertyId;
+        return propertyModel
+            .deleteProperty(propId)
+            .then(() => propertyModel.findPropertyById(propId))
+            .then((property) => addressModel.deleteAddress(property.address))
+            .then(() => wishlistModel.deletePropertyFromWishlist(propId))
+            .then((response) => res.send(response));
+    }
+
+
     //
     // function enrollOwnerInProperty(req, res) {
     //     const propertyId = req.params.propertyId;
@@ -110,16 +135,38 @@ module.exports = function (app) {
     // }
 
     function createProperty(req, res) {
-        const currentUser = req.session.currentUser;
-        const ownerId = currentUser._id;
-        const property = Object.assign({
-            owner: ownerId
-        }, req.body);
-        propertyModel
-            .createProperty(property)
+        //     addressModel.createAddress(prop.address)
+        //         .then((address) => {
+        //         prop.address = address._id
+        //     const currentUser = req.session.currentUser;
+        //     const ownerId = currentUser._id;
+        //     const property = Object.assign({
+        //         owner: ownerId
+        //     }, prop);
+        // }
+        //     propertyModel
+        //         .createProperty(property)
+        //         .then(function (property) {
+        //             res.json(property);
+        //         })
+        var prop = req.body;
+        addressModel.createAddress(prop.address)
+            .then(function (address) {
+                prop.address = address._id
+            })
+            .then(function (address) {
+                const currentUser = req.session.currentUser;
+                const ownerId = currentUser._id;
+                const property = Object.assign({
+                    owner: ownerId
+                }, prop);
+                return propertyModel.createProperty(property);
+            })
             .then(function (property) {
                 res.json(property);
-            })
+            });
+
+
     }
 
     // function getAllPropertys(req, res) {

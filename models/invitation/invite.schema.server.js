@@ -7,6 +7,7 @@ var enrollmentSchema = mongoose.Schema({
     property: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'PropertyModel'
-    }
-}, {collection: 'wishlist'});
+    },
+    status: String
+}, {collection: 'invite'});
 module.exports = enrollmentSchema;

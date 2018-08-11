@@ -3,18 +3,20 @@ var propertySchema = require('./property.schema.server');
 var propertyModel = mongoose.model('PropertyModel', propertySchema);
 
 function findPropertyByCredentials(credentials) {
-    return propertyModel.findOne(credentials, {propertyname: 1});
+    return propertyModel.findOne(credentials);
 }
 
 function findPropertiesForOwner(ownerId) {
     return propertyModel
         .find({owner: ownerId})
+        .populate('address')
         .exec();
 }
 
 function findPropertiesForUniversity(universityId) {
     return propertyModel
         .find({university: universityId})
+        .populate('address')
         .exec();
 }
 
@@ -24,7 +26,7 @@ function createProperty(property) {
 }
 
 function findAllPropertys() {
-    return propertyModel.find();
+    return propertyModel.find().populate('address').exec();
 }
 
 function updateProperty(property) {
@@ -39,8 +41,16 @@ function findByPropertyName(propertyname) {
     return propertyModel.findOne({propertyname: propertyname})
 }
 
-function deleteProfile(propertyId) {
+function findPropertyById(propId) {
+    return propertyModel.findById(propId);
+}
+
+function deleteProperty(propertyId) {
     return propertyModel.remove({_id: propertyId})
+}
+
+function deletePropertyByUserId(userId) {
+    return propertyModel.remove({owner: userId})
 }
 
 var api = {
@@ -49,10 +59,11 @@ var api = {
     findPropertyByCredentials: findPropertyByCredentials,
     updateProperty: updateProperty,
     findByPropertyName: findByPropertyName,
-    deleteProfile: deleteProfile,
+    deleteProperty: deleteProperty,
     findPropertiesForOwner: findPropertiesForOwner,
-    findPropertiesForUniversity: findPropertiesForUniversity
-
+    findPropertiesForUniversity: findPropertiesForUniversity,
+    findPropertyById: findPropertyById,
+    deletePropertyByUserId: deletePropertyByUserId
 };
 
 module.exports = api;

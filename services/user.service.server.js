@@ -9,6 +9,10 @@ module.exports = function (app) {
     app.get("/api/user/:username", findUserByUsername)
 
     var userModel = require('../models/user/user.model.server');
+    var propertyModel = require('../models/property/property.model.server');
+    var wishlistModel = require('../models/wishlist/wishlist.model.server');
+    var propertyService = require('./property.service.server');
+    var addressModel = require('../models/address/address.model.server');
 
     function login(req, res) {
         var credentials = req.body;
@@ -36,17 +40,36 @@ module.exports = function (app) {
         return userModel
             .updateUser(user)
             .then(response => res.send(response)
-    )
-        ;
+            )
+            ;
     }
 
     function deleteProfile(req, res) {
         var user = req.session['currentUser'];
-        return userModel
-            .deleteProfile(user._id)
-            .then(response => res.send(response)
-    )
-        ;
+        if (user.role === "Owner") {
+            return userModel.deleteProfile(user._id)
+                .then(() => propertyModel.findPropertiesForOwner(user._id))
+                .then((properties) => {
+                    for(var index in properties)
+                    {
+                        var property = properties[index];
+                        var propId = property._id
+                        propertyModel
+                            .deleteProperty(propId)
+                            .then((property) => addressModel.deleteAddress(property.address))
+                            .then(() => wishlistModel.deletePropertyFromWishlist(propId))
+                            .then((response) => res.send(response))
+                    }
+                })
+        }
+        if (user.role === "Tenant") {
+            return userModel
+                .deleteProfile(user._id)
+                .then(() => wishlistModel.deleteFromWishListByUserId(user._id))
+                .then(() => function (response) {
+                    res.send(response)
+                });
+        }
     }
 
     function profile(req, res) {

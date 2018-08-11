@@ -13,8 +13,12 @@ function removePropertyFromUserWishlist(userId, propertyId) {
     return wishlistModel.remove({property: propertyId, user: userId});
 }
 
-function removePropertyFromWishlist(propertyId) {
+function deletePropertyFromWishlist(propertyId) {
     return wishlistModel.remove({property: propertyId});
+}
+
+function deleteFromWishListByUserId(userId) {
+    return wishlistModel.remove({user: userId});
 }
 
 function findWishListedPropertiesForUser(userId) {
@@ -26,7 +30,8 @@ function findWishListedPropertiesForUser(userId) {
 
 module.exports = {
     addPropertyToWishlist: addPropertyToWishlist,
+    deletePropertyFromWishlist: deletePropertyFromWishlist,
     removePropertyFromUserWishlist: removePropertyFromUserWishlist,
-    removePropertyFromWishlist: removePropertyFromWishlist,
-    findWishListedPropertiesForUser: findWishListedPropertiesForUser
+    findWishListedPropertiesForUser: findWishListedPropertiesForUser,
+    deleteFromWishListByUserId: deleteFromWishListByUserId
 };
