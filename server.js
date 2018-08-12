@@ -3,7 +3,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session')
 var mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost/project')
+mongoose.connect('mongodb://heroku_h04z40gp:6lrgld577p7sth6da75ggitsio@ds119692.mlab.com:19692/heroku_h04z40gp')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -37,4 +37,4 @@ propertyService(app);
 universityService(app);
 wishlistService(app);
 inviteService(app);
-app.listen(4000);
+app.listen(process.env.PORT || 4000);
