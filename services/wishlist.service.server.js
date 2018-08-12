@@ -3,6 +3,7 @@ module.exports = function (app) {
     app.post('/api/tenant/property/:propertyId', addPropertyToWishlist);
     app.delete('/api/tenant/:userId/property/:propertyId', removePropertyFromUserWishlist);
     app.get('/api/tenant/property/:userId', findWishListedPropertiesForUser);
+    app.post('/api/tenant/:tenantId/property/:propertyId', addTenantPropertyToWishlist);
 
 
     const wishlistModel = require('../models/wishlist/wishlist.model.server');
@@ -18,6 +19,21 @@ module.exports = function (app) {
             .findWishListedPropertiesForUser(tenantId)
             .then(function (properties) {
                 res.json(properties);
+            });
+    }
+
+    function addTenantPropertyToWishlist(req, res) {
+        const propertyId = req.params.propertyId;
+        const tenantId = req.params.tenantId;
+        const wishlist = {
+            user: tenantId,
+            property: propertyId
+        };
+
+        wishlistModel
+            .addPropertyToWishlist(wishlist)
+            .then(function (wishlist) {
+                res.json(wishlist);
             });
     }
 

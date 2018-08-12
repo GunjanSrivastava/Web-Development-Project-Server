@@ -6,6 +6,8 @@ module.exports = function (app) {
     app.get('/api/property/:propertyId', findPropertyById);
     app.delete("/api/property/:propertyId", deleteProperty);
     app.put("/api/property", updateProperty);
+    app.get("/api/property", getAllPropertys);
+
 
     //
     // app.post('/api/course/:courseId/property', createProperty);
@@ -173,12 +175,12 @@ module.exports = function (app) {
 
     }
 
-    // function getAllPropertys(req, res) {
-    //     propertyModel
-    //         .findAllPropertys()
-    //         .then(propertys => (
-    //         res.send(propertys)
-    //     )
-    // );
-    // }
+    function getAllPropertys(req, res) {
+        propertyModel
+            .findAllPropertys()
+            .then(propertys => (
+            res.send(propertys)
+        )
+    );
+    }
 };
