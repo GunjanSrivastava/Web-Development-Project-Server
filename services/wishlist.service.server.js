@@ -1,15 +1,19 @@
 module.exports = function (app) {
 
     app.post('/api/tenant/property/:propertyId', addPropertyToWishlist);
-    app.delete('/api/tenant/property/:propertyId', removePropertyFromUserWishlist);
-    app.get('/api/tenant/property', findWishListedPropertiesForUser);
+    app.delete('/api/tenant/:userId/property/:propertyId', removePropertyFromUserWishlist);
+    app.get('/api/tenant/property/:userId', findWishListedPropertiesForUser);
 
 
     const wishlistModel = require('../models/wishlist/wishlist.model.server');
 
     function findWishListedPropertiesForUser(req, res) {
         const currentUser = req.session.currentUser;
-        const tenantId = currentUser._id;
+        var tenantId = currentUser._id;
+        var userId = req.params.userId;
+        if(userId!='self'){
+            tenantId = userId;
+        }
         wishlistModel
             .findWishListedPropertiesForUser(tenantId)
             .then(function (properties) {
@@ -36,7 +40,11 @@ module.exports = function (app) {
     function removePropertyFromUserWishlist(req, res) {
         const propertyId = req.params.propertyId;
         const currentUser = req.session.currentUser;
-        const tenantId = currentUser._id;
+        var tenantId = currentUser._id;
+        var userId = req.params.userId;
+        if(userId!='self'){
+            tenantId = userId;
+        }
         wishlistModel
             .removePropertyFromUserWishlist(tenantId, propertyId)
             .then(function (wishlist) {

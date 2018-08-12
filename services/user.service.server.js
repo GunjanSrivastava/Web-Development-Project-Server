@@ -6,7 +6,8 @@ module.exports = function (app) {
     app.post('/api/login', login);
     app.post('/api/profile', updateProfile)
     app.delete("/api/profile", deleteProfile)
-    app.get("/api/user/:username", findUserByUsername)
+    app.get("/api/user/username/:username", findUserByUsername)
+    app.get("/api/user/:userId", findUserById)
 
     var userModel = require('../models/user/user.model.server');
     var propertyModel = require('../models/property/property.model.server');
@@ -30,6 +31,14 @@ module.exports = function (app) {
             });
     }
 
+    function findUserById(req, res) {
+        var userId = req.params.userId;
+        return userModel.findUserById(userId)
+            .then(function (user) {
+                return res.send(user);
+            });
+    }
+
     function logout(req, res) {
         req.session.destroy();
         res.send(200);
@@ -40,12 +49,11 @@ module.exports = function (app) {
         return userModel
             .updateUser(user)
             .then(response => res.send(response)
-            )
-            ;
+            );
     }
 
     function deleteProfile(req, res) {
-        var user = req.session['currentUser'];
+        var user = req.body;
         if (user.role === "Owner") {
             return userModel.deleteProfile(user._id)
                 .then(() => propertyModel.findPropertiesForOwner(user._id))

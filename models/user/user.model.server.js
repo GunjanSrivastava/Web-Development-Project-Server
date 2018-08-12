@@ -14,6 +14,10 @@ function findAllUsers() {
     return userModel.find();
 }
 
+function findUserById(userId) {
+    return userModel.findById(userId);
+}
+
 function updateUser(user) {
     return userModel.update({
         _id: user._id
@@ -37,7 +41,8 @@ var api = {
     findUserByCredentials: findUserByCredentials,
     updateUser: updateUser,
     findByUserName: findByUserName,
-    deleteProfile: deleteProfile
+    deleteProfile: deleteProfile,
+    findUserById: findUserById
 };
 
 module.exports = api;

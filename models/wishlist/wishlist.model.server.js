@@ -24,7 +24,14 @@ function deleteFromWishListByUserId(userId) {
 function findWishListedPropertiesForUser(userId) {
     return wishlistModel
         .find({user: userId})
-        .populate('property')
+        .populate({
+            path: 'property',
+            model: 'PropertyModel',
+            populate: {
+                path: 'address',
+                model: 'AddressModel'
+            }
+        })
         .exec();
 }
 

@@ -1,10 +1,11 @@
 module.exports = function (app) {
 
     app.post('/api/owner/property', createProperty);
-    app.get('/api/owner/property', findPropertiesForOwner);
+    app.get('/api/owner/property/:userId', findPropertiesForOwner);
     app.get('/api/property/university/:universityId', findPropertiesForUniversity);
     app.get('/api/property/:propertyId', findPropertyById);
     app.delete("/api/property/:propertyId", deleteProperty);
+    app.put("/api/property", updateProperty);
 
     //
     // app.post('/api/course/:courseId/property', createProperty);
@@ -20,10 +21,15 @@ module.exports = function (app) {
     const propertyModel = require('../models/property/property.model.server');
     const addressModel = require('../models/address/address.model.server');
     var wishlistModel = require('../models/wishlist/wishlist.model.server');
+    var inviteModel = require('../models/invite/invite.model.server');
 
     function findPropertiesForOwner(req, res) {
         const currentUser = req.session.currentUser;
-        const ownerId = currentUser._id;
+        var ownerId = currentUser._id;
+        const userId =  req.params.userId;
+        if(userId!=='self'){
+            ownerId = userId;
+        }
         propertyModel
             .findPropertiesForOwner(ownerId)
             .then(function (enrollments) {
@@ -50,11 +56,11 @@ module.exports = function (app) {
 
     function deleteProperty(req, res) {
         var propId = req.params.propertyId;
-        return propertyModel
-            .deleteProperty(propId)
-            .then(() => propertyModel.findPropertyById(propId))
-            .then((property) => addressModel.deleteAddress(property.address))
+        return propertyModel.findPropertyById(propId)
+            .then((property) => addressModel.deleteAddress(property.address._id))
             .then(() => wishlistModel.deletePropertyFromWishlist(propId))
+            .then(() => inviteModel.deletePropertyFromInvitation(propId))
+            .then(() => propertyModel.deleteProperty(propId))
             .then((response) => res.send(response));
     }
 
@@ -117,13 +123,11 @@ module.exports = function (app) {
     //     ;
     // }
     //
-    // function updateProperty(req, res) {
-    //     var propertyId = req.params.propertyId;
-    //     var property = req.body;
-    //     propertyModel.updateProperty(propertyId, property)
-    //         .then(response => res.send(response)
-    // )
-    // }
+    function updateProperty(req, res) {
+        var property = req.body;
+        propertyModel.updateProperty(property)
+            .then(response => res.send(response))
+    }
     //
     // function findPropertysForOwner(req, res) {
     //     const courseId = req.params['courseId'];

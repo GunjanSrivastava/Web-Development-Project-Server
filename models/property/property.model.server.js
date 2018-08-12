@@ -42,7 +42,7 @@ function findByPropertyName(propertyname) {
 }
 
 function findPropertyById(propId) {
-    return propertyModel.findById(propId);
+    return propertyModel.findById(propId).populate('address').populate('university').exec();
 }
 
 function deleteProperty(propertyId) {
