@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var inviteSchema = require('./invite.schema.server');
+var inviteSchema = require('./ada.schema.server');
 var inviteModel = mongoose.model(
     'InvitationModel',
     inviteSchema
