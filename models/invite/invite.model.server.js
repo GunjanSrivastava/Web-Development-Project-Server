@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var inviteSchema = require('./Invite.schema.server');
+var inviteSchema = require('./invite.schema.server');
 var inviteModel = mongoose.model(
     'InvitationModel',
     inviteSchema
