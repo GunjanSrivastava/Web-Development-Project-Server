@@ -9,6 +9,12 @@ function addToInvitation(invite) {
     return inviteModel.create(invite);
 }
 
+function findAllInvites(invite) {
+    return inviteModel.find()
+        .populate('property')
+        .populate('user')
+        .exec();
+}
 
 function updateInvitationStatus(credentials, status) {
     return inviteModel.findOne(credentials).update({status: status});
@@ -44,5 +50,6 @@ module.exports = {
     removeFromInvitation: removeFromInvitation,
     deleteFromInvitationByUserId: deleteFromInvitationByUserId,
     findInvitationByPropertyId: findInvitationByPropertyId,
-    findInvitationByCredentials: findInvitationByCredentials
+    findInvitationByCredentials: findInvitationByCredentials,
+    findAllInvites: findAllInvites
 };
