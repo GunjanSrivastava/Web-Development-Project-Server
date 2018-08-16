@@ -14,6 +14,7 @@ module.exports = function (app) {
     var wishlistModel = require('../models/wishlist/wishlist.model.server');
     var propertyService = require('./property.service.server');
     var addressModel = require('../models/address/address.model.server');
+    var inviteListModel = require('../models/invite/invite.model.server');
 
     function login(req, res) {
         var credentials = req.body;
@@ -55,27 +56,31 @@ module.exports = function (app) {
     function deleteProfile(req, res) {
         var user = req.body;
         if (user.role === "Owner") {
-            return userModel.deleteProfile(user._id)
-                .then(() => propertyModel.findPropertiesForOwner(user._id))
+            return  propertyModel.findPropertiesForOwner(user._id)
                 .then((properties) => {
-                    for(var index in properties)
-                    {
-                        var property = properties[index];
-                        var propId = property._id
-                        propertyModel
-                            .deleteProperty(propId)
-                            .then((property) => addressModel.deleteAddress(property.address))
-                            .then(() => wishlistModel.deletePropertyFromWishlist(propId))
-                            .then((response) => res.send(response))
-                    }
-                })
+                        for (var index in properties) {
+                            (function (property) {
+                                propertyModel
+                                    .deleteProperty(property._id)
+                                    .then(() => addressModel.deleteAddress(property.address._id))
+                                    .then(() => wishlistModel.deletePropertyFromWishlist(property._id))
+                                    .then(() => inviteListModel.deletePropertyFromInvitation(property._id))
+                                    .then((response) => console.log("done") )
+                            })(properties[index])
+                        }
+                    }).then(() => userModel.deleteProfile(user._id))
+                        .then((response) => {
+                            req.session.destroy();
+                            res.send(response);
+                        })
         }
         if (user.role === "Tenant") {
-            return userModel
-                .deleteProfile(user._id)
-                .then(() => wishlistModel.deleteFromWishListByUserId(user._id))
-                .then(() => function (response) {
-                    res.send(response)
+            return wishlistModel.deleteFromWishListByUserId(user._id)
+                .then(() => inviteListModel.deleteFromInvitationByUserId(user._id))
+                .then(() => userModel.deleteProfile(user._id))
+                .then((response) =>  {
+                    req.session.destroy();
+                    res.send(response);
                 });
         }
     }
@@ -85,7 +90,12 @@ module.exports = function (app) {
         if (user != null) {
             userModel.findByUserName(user.username)
                 .then(function (user) {
-                    return res.send(user);
+                    if(user==null){
+                        return res.send({invalid: true});
+                    }
+                    else {
+                        return res.send(user);
+                    }
                 })
         }
         else {
