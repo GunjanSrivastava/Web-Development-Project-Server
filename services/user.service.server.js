@@ -70,7 +70,6 @@ module.exports = function (app) {
                         }
                     }).then(() => userModel.deleteProfile(user._id))
                         .then((response) => {
-                            req.session.destroy();
                             res.send(response);
                         })
         }
@@ -79,7 +78,6 @@ module.exports = function (app) {
                 .then(() => inviteListModel.deleteFromInvitationByUserId(user._id))
                 .then(() => userModel.deleteProfile(user._id))
                 .then((response) =>  {
-                    req.session.destroy();
                     res.send(response);
                 });
         }
@@ -91,6 +89,7 @@ module.exports = function (app) {
             userModel.findByUserName(user.username)
                 .then(function (user) {
                     if(user==null){
+                        req.session.destroy();
                         return res.send({invalid: true});
                     }
                     else {
