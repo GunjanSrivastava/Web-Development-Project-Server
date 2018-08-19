@@ -1,6 +1,7 @@
 module.exports = function (app) {
     app.get('/api/user', findAllUsers);
     app.post('/api/register', createUser);
+    app.post('/api/create', createUserAdmin);
     app.get('/api/profile', profile);
     app.post('/api/logout', logout);
     app.post('/api/login', login);
@@ -56,28 +57,34 @@ module.exports = function (app) {
     function deleteProfile(req, res) {
         var user = req.body;
         if (user.role === "Owner") {
-            return  propertyModel.findPropertiesForOwner(user._id)
+            return propertyModel.findPropertiesForOwner(user._id)
                 .then((properties) => {
-                        for (var index in properties) {
-                            (function (property) {
-                                propertyModel
-                                    .deleteProperty(property._id)
-                                    .then(() => addressModel.deleteAddress(property.address._id))
-                                    .then(() => wishlistModel.deletePropertyFromWishlist(property._id))
-                                    .then(() => inviteListModel.deletePropertyFromInvitation(property._id))
-                                    .then((response) => console.log("done") )
-                            })(properties[index])
-                        }
-                    }).then(() => userModel.deleteProfile(user._id))
-                        .then((response) => {
-                            res.send(response);
-                        })
+                    for (var index in properties) {
+                        (function (property) {
+                            propertyModel
+                                .deleteProperty(property._id)
+                                .then(() => addressModel.deleteAddress(property.address._id))
+                                .then(() => wishlistModel.deletePropertyFromWishlist(property._id))
+                                .then(() => inviteListModel.deletePropertyFromInvitation(property._id))
+                                .then((response) => console.log("done"))
+                        })(properties[index])
+                    }
+                }).then(() => userModel.deleteProfile(user._id))
+                .then((response) => {
+                    res.send(response);
+                })
         }
-        if (user.role === "Tenant") {
+        else if (user.role === "Tenant") {
             return wishlistModel.deleteFromWishListByUserId(user._id)
                 .then(() => inviteListModel.deleteFromInvitationByUserId(user._id))
                 .then(() => userModel.deleteProfile(user._id))
-                .then((response) =>  {
+                .then((response) => {
+                    res.send(response);
+                });
+        }
+        else {
+            userModel.deleteProfile(user._id)
+                .then((response) => {
                     res.send(response);
                 });
         }
@@ -88,7 +95,7 @@ module.exports = function (app) {
         if (user != null) {
             userModel.findByUserName(user.username)
                 .then(function (user) {
-                    if(user==null){
+                    if (user == null) {
                         req.session.destroy();
                         return res.send({invalid: true});
                     }
@@ -107,6 +114,14 @@ module.exports = function (app) {
         userModel.createUser(user)
             .then(function (user) {
                 req.session['currentUser'] = user;
+                res.send(user);
+            })
+    }
+
+    function createUserAdmin(req, res) {
+        var user = req.body;
+        userModel.createUser(user)
+            .then(function (user) {
                 res.send(user);
             })
     }
